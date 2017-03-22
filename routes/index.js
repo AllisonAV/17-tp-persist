@@ -47,6 +47,22 @@ router.get('/api', (req, res, next) =>
 		.catch(next)
 )
 
+router.get('/api/attractions', function (req, res, next){
+		Promise.all([
+		Hotel.findAll({ include: [Place] }),
+		Restaurant.findAll({ include: [Place] }),
+		Activity.findAll({ include: [Place] })
+	])
+	.spread(function(hotels, restaurants, activities) {
+		res.send({
+			hotels: hotels,
+			restaurants: restaurants,
+			activities: activities
+		})
+	})
+	.catch(next)
+})
+
 // Use Fetch (built in browser API):
 //
 //   IDK, look it up on MDN?

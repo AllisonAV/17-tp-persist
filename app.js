@@ -23,6 +23,7 @@ app.use(bodyParser.json());
 
 app.use(morgan('dev'))
 app.use(router);
+app.use('/api/day', require('./routes/api/days'));
 
 app.use(function(err, req, res, next) {
 	console.error(err)

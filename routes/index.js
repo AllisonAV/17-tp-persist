@@ -6,6 +6,7 @@ var Hotel = db.model('hotel');
 var Restaurant = db.model('restaurant');
 var Activity = db.model('activity');
 var Place = db.model('place');
+var Day = db.model('day');
 
 router.get('/', function(req, res, next) {
 	Promise.all([
@@ -77,5 +78,7 @@ router.post('/api/hotels',
 		Hotel.create(req.body)
 			.then(hotel => res.json(hotel))
 			.catch(next))
+
+
 
 module.exports = router;

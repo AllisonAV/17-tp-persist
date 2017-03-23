@@ -108,6 +108,30 @@ $(function initializeMap () {
 
           // Add this item to our itinerary for the current day
           $('.current.day').append(li)
+
+          // AJAX request to add item to database
+          switch  (type) {
+
+            case 'hotels' : {
+              console.log(type);
+              break;
+            }
+
+            case 'restaurants' : {
+              console.log(li);
+              break;
+            }
+
+            case 'activities' : {
+              console.log(type);
+              break;
+              
+            }
+
+            default : console.log('default', type);
+
+          }
+
         })
   )
 
@@ -126,17 +150,25 @@ $(function initializeMap () {
       $('.day.current').removeClass('current')
       
       // Add a new day
-      $(evt.target).before(
-        $(`<ol class="current day"><h3><span class=day-head></span><button class=delDay>x</button></h3></ol>`)
+        $(evt.target).before(
+          $(`<ol class="current day"><h3><span data-num=0 class=day-head></span><button class=delDay>x</button></h3></ol>`)
       )
+
+      //Send AJAX request to create new Day in Database
+      // $.post('/api/day', {number: $('.day').length})
+      // .then(function (day){ console.log(day);
+      //   })
+      // .catch( console.error.bind(console) );
 
       numberDays()
     }
   )
 
   function numberDays() {
-    $('.day').each((index, day) =>
-      $(day).find('.day-head').text(`day ${index + 1}`)
+    
+    $('.day').each((index, day) => 
+      $(day).find('.day-head').text(`day ${index + 1}`).val( `${index + 1}`)
+      
     )
   }
 
@@ -170,4 +202,10 @@ $(function initializeMap () {
 
   // When we start, add a day
   $('button.addDay').click()
+
+
+
+
+
+
 });

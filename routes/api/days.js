@@ -7,6 +7,8 @@ var Restaurant = db.model('restaurant');
 var Activity = db.model('activity');
 var Place = db.model('place');
 var Day = db.model('day');
+var DayRestaurant = db.model('day_restaurant');
+var DayActivity = db.model('day_activity');
 
 router.post('/', (req, res, next) =>
 	Day.create({
@@ -74,22 +76,60 @@ router.put('/:id/hotel/:hotelId', function(req, res, next) {
 // 		.catch(next)
 // });
 
-router.put('/:id/restaurants/:restaurantId', function(req, res, next) {
-	Day.findOne({
+router.post('/:id/restaurants/:restaurantId', function(req, res, next) {
+	return DayRestaurant.create({
+		dayId: +req.params.id,
+		restaurantId: +req.params.restaurantId
+	})
+		.then(daysRestaurant => res.json(daysRestaurant))
+		.catch(next)
+});
+
+router.delete('/:id/restaurants/:restaurantId', function(req, res, next) {
+	 DayRestaurant.destroy({
 		where: {
-			number: +req.params.id
+			dayId: +req.params.id,
+			restaurantId: +req.params.restaurantId
 		}
 	})
-	.then(function(day){
-		day.restaurantId = +req.params.hotelId
-		if(day.hotelId === -1){
-			day.hotelId = null;
-		}
-		return day.save()
+		.then(() => res.sendStatus(204))
+		.catch(next)
+});
+
+router.post('/:id/activities/:activityId', function(req, res, next) {
+	return DayActivity.create({
+		dayId: +req.params.id,
+		activityId: +req.params.activityId
 	})
-		.then(days => res.json(days))
+		.then(daysActivity => res.json(daysActivity))
+		.catch(next)
+});
+
+router.delete('/:id/activities/:activityId', function(req, res, next) {
+	 DayActivity.destroy({
+		where: {
+			dayId: +req.params.id,
+			activityId: +req.params.activityId
+		}
+	})
+		.then(() => res.sendStatus(204))
 		.catch(next)
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

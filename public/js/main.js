@@ -27,12 +27,12 @@ $(function initializeMap () {
       featureType: 'road.highway',
       elementType: 'geometry.fill',
       stylers: [{ color: '#ef8c25' }, { lightness: 40 }]
-    }, 
+    },
     {
       featureType: 'road.highway',
       elementType: 'geometry.stroke',
       stylers: [{ visibility: 'off' }]
-    }, 
+    },
     {
       featureType: 'poi.park',
       elementType: 'geometry.fill',
@@ -68,7 +68,7 @@ $(function initializeMap () {
   // 0. Fetch the database, parsed from json to a js object
   const db = fetch('/api').then(r => r.json())
 
-  // TODO: 
+  // TODO:
   // 1. Populate the <select>s with <option>s
   $('select').each(
     (_index, select) => {
@@ -90,15 +90,16 @@ $(function initializeMap () {
   // dataset item instead:
   //
   //   $('button[data-action="add"]').click(
-  $('button.add').click(    
+  $('button.add').click(
     evt =>
       $(evt.target.dataset.from)
         .find('option:selected')
-        .each((_i, option) => {
+        .each((_i, option) => {  //_i means that i is a placeholder, we are not really using it.
           const item = option.item
               , type = $(option)
                   .closest('select')[0]
                   .dataset.type
+                 // console.log('id num is:', item.id);
 
           // Make a li out of this item
           const li = $(`<li>${item.name} <button class='del'>x</button></li>`)[0]
@@ -110,22 +111,32 @@ $(function initializeMap () {
           $('.current.day').append(li)
 
           // AJAX request to add item to database
+
+        const dayValue = $('.current.day').children().children().val();
+          //console.log('dayValue is:', dayValue);
+          // switch: another way of writing if/else. You have to have breaks.
           switch  (type) {
 
             case 'hotels' : {
-              console.log(type);
+              $.ajax({
+                method: 'PUT',
+                url: `/api/day/${dayValue}/hotel/${item.id}`,
+                data: {} //this obj will be req.body obj. this is optional. if you want the request to have a body you add data.
+              })
+              .catch(console.error.bind(console));
               break;
             }
 
             case 'restaurants' : {
-              console.log(li);
+              // $.post(`/api/day/${dayValue}/restaurants/${item.id}`, {})
+              // .catch(console.error.bind(console));
               break;
             }
 
             case 'activities' : {
               console.log(type);
               break;
-              
+
             }
 
             default : console.log('default', type);
@@ -148,27 +159,25 @@ $(function initializeMap () {
     evt => {
       // Deselect all days
       $('.day.current').removeClass('current')
-      
+
       // Add a new day
         $(evt.target).before(
           $(`<ol class="current day"><h3><span data-num=0 class=day-head></span><button class=delDay>x</button></h3></ol>`)
       )
 
       //Send AJAX request to create new Day in Database
-      // $.post('/api/day', {number: $('.day').length})
-      // .then(function (day){ console.log(day);
-      //   })
-      // .catch( console.error.bind(console) );
+      $.post('/api/day', {number: $('.day').length})
+      .catch( console.error.bind(console) );
 
       numberDays()
     }
   )
 
   function numberDays() {
-    
-    $('.day').each((index, day) => 
-      $(day).find('.day-head').text(`day ${index + 1}`).val( `${index + 1}`)
-      
+
+    $('.day').each((index, day) =>
+      $(day).find('.day-head').text(`day ${index + 1}`).val(`${index + 1}`) //we are adding values to the day.
+
     )
   }
 
@@ -178,7 +187,7 @@ $(function initializeMap () {
       $('.day.current').removeClass('current')
       const $day = $(evt.target).closest('.day')
 
-      $('li').each((_i, li) => li.marker && li.marker.setMap(null))      
+      $('li').each((_i, li) => li.marker && li.marker.setMap(null))
       $day.addClass('current')
       $day.find('li').each((_i, li) => li.marker.setMap(currentMap))
     }
@@ -195,7 +204,7 @@ $(function initializeMap () {
         $(prev || next).addClass('current')
       }
 
-      $day.find('li').each((_i, li) => li.marker.setMap(currentMap))      
+      $day.find('li').each((_i, li) => li.marker.setMap(currentMap))
       $day.remove()
       numberDays()
     })

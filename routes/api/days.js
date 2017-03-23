@@ -1,6 +1,6 @@
 var Promise = require('bluebird');
 var router = require('express').Router();
-
+var chalk = require('chalk');
 var db = require('../../models');
 var Hotel = db.model('hotel');
 var Restaurant = db.model('restaurant');
@@ -46,11 +46,13 @@ router.delete('/:id', function (req, res, next) {
 })
 
 router.put('/:id/hotel/:hotelId', function(req, res, next) {
+	//chalk.magenta('Params:', req.params); this didnt log anything
 	Day.findOne({
 		where: {
 			number: +req.params.id
 		}
 	})
+
 	.then(function(day){
 		day.hotelId = +req.params.hotelId
 		if(day.hotelId === -1){
@@ -76,8 +78,9 @@ router.put('/:id/hotel/:hotelId', function(req, res, next) {
 // 		.catch(next)
 // });
 
+// http://docs.sequelizejs.com/en/latest/docs/associations/#belongs-to-many-associations check the belongs-to-many associations methods to create the routes!!!
 router.post('/:id/restaurants/:restaurantId', function(req, res, next) {
-	return DayRestaurant.create({
+	DayRestaurant.create({
 		dayId: +req.params.id,
 		restaurantId: +req.params.restaurantId
 	})
@@ -97,7 +100,7 @@ router.delete('/:id/restaurants/:restaurantId', function(req, res, next) {
 });
 
 router.post('/:id/activities/:activityId', function(req, res, next) {
-	return DayActivity.create({
+	DayActivity.create({
 		dayId: +req.params.id,
 		activityId: +req.params.activityId
 	})
